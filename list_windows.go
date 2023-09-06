@@ -4,7 +4,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/ncruces/zenity/internal/win"
+	"github.com/jeesk/zenity/internal/win"
 )
 
 func list(text string, items []string, opts options) (string, error) {

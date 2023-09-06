@@ -13,7 +13,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/ncruces/zenity/internal/win"
+	"github.com/jeesk/zenity/internal/win"
 )
 
 const (

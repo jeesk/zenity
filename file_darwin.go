@@ -1,9 +1,12 @@
 package zenity
 
 import (
+	"fmt"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
-	"github.com/ncruces/zenity/internal/zenutil"
+	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 func selectFile(opts options) (name string, err error) {
@@ -17,9 +20,7 @@ func selectFile(opts options) (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-	if opts.attach != nil {
-		data.Application = opts.attach
-	}
+	handleAttach(&opts, &data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
@@ -35,6 +36,28 @@ func selectFile(opts options) (name string, err error) {
 	return strResult(opts, out, err)
 }
 
+func handleAttach(opts *options, data *zenutil.File) {
+	if opts.dontAttachDarwinWindow {
+		return
+	}
+	if opts.attach != nil {
+		data.Application = opts.attach
+	} else {
+		cmd := exec.Command("osascript", "-e", `tell application "System Events"
+    set frontAppName to name of first application process whose frontmost is true
+end tell
+
+return frontAppName`)
+		output, err := cmd.Output()
+		if err == nil {
+			processID := strings.TrimSpace(string(output))
+			data.Application = processID
+		} else {
+			fmt.Println("macos Failed to get process ID:", err)
+		}
+	}
+}
+
 func selectFileMultiple(opts options) (list []string, err error) {
 	var data zenutil.File
 	data.Separator = zenutil.Separator
@@ -48,9 +71,7 @@ func selectFileMultiple(opts options) (list []string, err error) {
 	if err != nil {
 		return nil, err
 	}
-	if opts.attach != nil {
-		data.Application = opts.attach
-	}
+	handleAttach(&opts, &data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
@@ -77,9 +98,7 @@ func selectFileSave(opts options) (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-	if opts.attach != nil {
-		data.Application = opts.attach
-	}
+	handleAttach(&opts, &data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}

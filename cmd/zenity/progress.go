@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ncruces/zenity"
-	"github.com/ncruces/zenity/internal/zencmd"
+	"github.com/jeesk/zenity"
+	"github.com/jeesk/zenity/internal/zencmd"
 )
 
 func progress(opts ...zenity.Option) (err error) {

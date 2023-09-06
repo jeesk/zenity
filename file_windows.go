@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"runtime"
 	"syscall"
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/ncruces/zenity/internal/win"
+	"github.com/jeesk/zenity/internal/win"
 )
 
 func selectFile(opts options) (string, error) {
@@ -20,6 +21,7 @@ func selectFile(opts options) (string, error) {
 	if opts.directory {
 		return browseForFolder(opts)
 	}
+	handleAttach(&opts)
 
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
@@ -58,6 +60,19 @@ func selectFile(opts options) (string, error) {
 	return syscall.UTF16ToString(res[:]), nil
 }
 
+func handleAttach(opts *options) {
+	if opts.attach == nil {
+		err, u := win.GetForegroundWindow()
+		if err == nil {
+			if v := reflect.ValueOf(u); v.Kind() == reflect.Uintptr {
+				opts.attach = win.HWND(uintptr(v.Uint()))
+			} else {
+				panic("interface conversion: expected uintptr")
+			}
+		}
+	}
+}
+
 func selectFileMultiple(opts options) ([]string, error) {
 	_, list, shown, err := fileOpenDialog(opts, true)
 	if shown || opts.ctx != nil && opts.ctx.Err() != nil {
@@ -66,6 +81,8 @@ func selectFileMultiple(opts options) ([]string, error) {
 	if opts.directory {
 		return nil, fmt.Errorf("%w: multiple directory", ErrUnsupported)
 	}
+
+	handleAttach(&opts)
 
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
@@ -138,6 +155,7 @@ func selectFileSave(opts options) (string, error) {
 		return name, err
 	}
 
+	handleAttach(&opts)
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
@@ -182,6 +200,7 @@ func selectFileSave(opts options) (string, error) {
 }
 
 func fileOpenDialog(opts options, multi bool) (string, []string, bool, error) {
+	handleAttach(&opts)
 	uninit, err := coInitialize()
 	if err != nil {
 		return "", nil, false, err
@@ -408,6 +427,7 @@ func browseForFolder(opts options) (string, error) {
 		return "", err
 	}
 	defer uninit()
+	handleAttach(&opts)
 
 	var args win.BROWSEINFO
 	args.Owner, _ = opts.attach.(win.HWND)

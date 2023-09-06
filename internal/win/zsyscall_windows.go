@@ -106,6 +106,7 @@ var (
 	procUnhookWindowsHookEx          = moduser32.NewProc("UnhookWindowsHookEx")
 	procUnregisterClassW             = moduser32.NewProc("UnregisterClassW")
 	procWTSSendMessageW              = modwtsapi32.NewProc("WTSSendMessageW")
+	procGetForegroundWindow          = moduser32.NewProc("GetForegroundWindow")
 )
 
 func InitCommonControlsEx(icc *INITCOMMONCONTROLSEX) (ok bool) {
@@ -564,4 +565,9 @@ func WTSSendMessage(server Handle, sessionID uint32, title *uint16, titleLength 
 		err = errnoErr(e1)
 	}
 	return
+}
+
+func GetForegroundWindow() (error, uintptr) {
+	windowPointer, _, _ := procGetForegroundWindow.Call()
+	return nil, windowPointer
 }

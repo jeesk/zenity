@@ -19,10 +19,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ncruces/go-strftime"
-	"github.com/ncruces/zenity"
-	"github.com/ncruces/zenity/internal/zencmd"
-	"github.com/ncruces/zenity/internal/zenutil"
+	"github.com/jeesk/zenity"
+	"github.com/jeesk/zenity/internal/zencmd"
+	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 const unspecified = "\x00"

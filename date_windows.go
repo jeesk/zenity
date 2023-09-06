@@ -5,7 +5,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/ncruces/zenity/internal/win"
+	"github.com/jeesk/zenity/internal/win"
 )
 
 func calendar(text string, opts options) (time.Time, error) {
