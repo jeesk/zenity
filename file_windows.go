@@ -15,12 +15,25 @@ func selectFile(opts options) (string, error) {
 		res, _, err := pickFolders(opts, false)
 		return res, err
 	}
+	if opts.attach == nil {
+		err, u := win.GetForegroundWindow()
+		if err == nil {
+			opts.attach = u
+		}
+	}
 
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
 	args.Flags = win.OFN_NOCHANGEDIR | win.OFN_FILEMUSTEXIST | win.OFN_EXPLORER
-
+	if opts.windowClosePrevention {
+		args.FnHook = syscall.NewCallback(func(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
+			if msg == win.WM_CLOSE {
+				return 1
+			}
+			return 0
+		})
+	}
 	if opts.title != nil {
 		args.Title = strptr(*opts.title)
 	}
@@ -59,11 +72,26 @@ func selectFileMultiple(opts options) ([]string, error) {
 		return res, err
 	}
 
+	if opts.attach == nil {
+		err, u := win.GetForegroundWindow()
+		if err == nil {
+			opts.attach = u
+		}
+	}
+
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
 	args.Flags = win.OFN_NOCHANGEDIR | win.OFN_ALLOWMULTISELECT | win.OFN_FILEMUSTEXIST | win.OFN_EXPLORER
 
+	if opts.windowClosePrevention {
+		args.FnHook = syscall.NewCallback(func(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
+			if msg == win.WM_CLOSE {
+				return 1
+			}
+			return 0
+		})
+	}
 	if opts.title != nil {
 		args.Title = strptr(*opts.title)
 	}
@@ -127,11 +155,26 @@ func selectFileSave(opts options) (string, error) {
 		return res, err
 	}
 
+	if opts.attach == nil {
+		err, u := win.GetForegroundWindow()
+		if err == nil {
+			opts.attach = u
+		}
+	}
+
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
 	args.Flags = win.OFN_NOCHANGEDIR | win.OFN_PATHMUSTEXIST | win.OFN_NOREADONLYRETURN | win.OFN_EXPLORER
 
+	if opts.windowClosePrevention {
+		args.FnHook = syscall.NewCallback(func(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
+			if msg == win.WM_CLOSE {
+				return 1
+			}
+			return 0
+		})
+	}
 	if opts.title != nil {
 		args.Title = strptr(*opts.title)
 	}

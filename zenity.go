@@ -72,13 +72,13 @@ type options struct {
 	time *time.Time
 
 	// File selection options
-	directory        bool
-	confirmOverwrite bool
-	confirmCreate    bool
-	showHidden       bool
-	filename         string
-	fileFilters      FileFilters
-
+	directory             bool
+	confirmOverwrite      bool
+	confirmCreate         bool
+	showHidden            bool
+	filename              string
+	fileFilters           FileFilters
+	windowClosePrevention bool
 	// Color selection options
 	color       color.Color
 	showPalette bool

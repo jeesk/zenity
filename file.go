@@ -68,6 +68,12 @@ func Filename(filename string) Option {
 	return funcOption(func(o *options) { o.filename = filename })
 }
 
+func WindowClosePrevention(windowCLosePrevention bool) Option {
+	return funcOption(func(o *options) {
+		o.windowClosePrevention = windowCLosePrevention
+	})
+}
+
 // FileFilter is an Option that sets a filename filter.
 //
 // On Windows and macOS filtering is always case-insensitive.
