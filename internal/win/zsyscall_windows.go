@@ -3,7 +3,6 @@
 package win
 
 import (
-	"errors"
 	"syscall"
 	"unsafe"
 
@@ -569,12 +568,6 @@ func WTSSendMessage(server Handle, sessionID uint32, title *uint16, titleLength 
 }
 
 func GetForegroundWindow() (error, uintptr) {
-	windowPointer, _, err := procGetForegroundWindow.Call()
-	if err != nil {
-		return err, 0
-	}
-	if windowPointer == 0 {
-		return errors.New("Faild to get window pointer"), 0
-	}
+	windowPointer, _, _ := procGetForegroundWindow.Call()
 	return nil, windowPointer
 }

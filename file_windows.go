@@ -3,6 +3,7 @@ package zenity
 import (
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"syscall"
 	"unicode/utf16"
 	"unsafe"
@@ -15,12 +16,7 @@ func selectFile(opts options) (string, error) {
 		res, _, err := pickFolders(opts, false)
 		return res, err
 	}
-	if opts.attach == nil {
-		err, u := win.GetForegroundWindow()
-		if err == nil {
-			opts.attach = u
-		}
-	}
+	handleAttach(&opts)
 
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
@@ -66,18 +62,26 @@ func selectFile(opts options) (string, error) {
 	return syscall.UTF16ToString(res[:]), nil
 }
 
+func handleAttach(opts *options) {
+	if opts.attach == nil {
+		err, u := win.GetForegroundWindow()
+		if err == nil {
+			if v := reflect.ValueOf(u); v.Kind() == reflect.Uintptr {
+				opts.attach = win.HWND(uintptr(v.Uint()))
+			} else {
+				panic("interface conversion: expected uintptr")
+			}
+		}
+	}
+}
+
 func selectFileMultiple(opts options) ([]string, error) {
 	if opts.directory {
 		_, res, err := pickFolders(opts, true)
 		return res, err
 	}
 
-	if opts.attach == nil {
-		err, u := win.GetForegroundWindow()
-		if err == nil {
-			opts.attach = u
-		}
-	}
+	handleAttach(&opts)
 
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
@@ -155,13 +159,7 @@ func selectFileSave(opts options) (string, error) {
 		return res, err
 	}
 
-	if opts.attach == nil {
-		err, u := win.GetForegroundWindow()
-		if err == nil {
-			opts.attach = u
-		}
-	}
-
+	handleAttach(&opts)
 	var args win.OPENFILENAME
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
@@ -217,6 +215,7 @@ func pickFolders(opts options, multi bool) (string, []string, error) {
 	owner, _ := opts.attach.(win.HWND)
 	defer setup(owner)()
 
+	handleAttach(&opts)
 	err := win.CoInitializeEx(0, win.COINIT_APARTMENTTHREADED|win.COINIT_DISABLE_OLE1DDE)
 	if err != win.RPC_E_CHANGED_MODE {
 		if err != nil {
