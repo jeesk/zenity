@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ncruces/zenity/internal/zenutil"
+	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 func quoteAccelerators(text string) string {

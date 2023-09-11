@@ -3,7 +3,7 @@ package zenity
 import (
 	"path/filepath"
 
-	"github.com/ncruces/zenity/internal/zenutil"
+	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 func selectFile(opts options) (name string, err error) {

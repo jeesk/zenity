@@ -2,7 +2,7 @@
 
 package zenity
 
-import "github.com/ncruces/zenity/internal/zenutil"
+import "github.com/jeesk/zenity/internal/zenutil"
 
 func password(opts options) (string, string, error) {
 	args := []string{"--password"}

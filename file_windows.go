@@ -7,7 +7,7 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/ncruces/zenity/internal/win"
+	"github.com/jeesk/zenity/internal/win"
 )
 
 func selectFile(opts options) (string, error) {

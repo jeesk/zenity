@@ -1,6 +1,6 @@
 package zencmd
 
-import "github.com/ncruces/zenity/internal/win"
+import "github.com/jeesk/zenity/internal/win"
 
 // KillParent is internal.
 func KillParent() {

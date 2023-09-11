@@ -2,7 +2,7 @@
 
 package zenity
 
-import "github.com/ncruces/zenity/internal/zenutil"
+import "github.com/jeesk/zenity/internal/zenutil"
 
 func progress(opts options) (ProgressDialog, error) {
 	args := []string{"--progress"}

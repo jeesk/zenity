@@ -15,7 +15,7 @@ import (
 	"image/color"
 	"time"
 
-	"github.com/ncruces/zenity/internal/zenutil"
+	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 func ptr[T any](v T) *T { return &v }

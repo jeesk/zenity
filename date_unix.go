@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ncruces/zenity/internal/zenutil"
+	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 func calendar(text string, opts options) (time.Time, error) {
