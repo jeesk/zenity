@@ -20,22 +20,7 @@ func selectFile(opts options) (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-	if opts.attach != nil {
-		data.Application = opts.attach
-	} else {
-		cmd := exec.Command("osascript", "-e", `tell application "System Events"
-    set frontAppName to name of first application process whose frontmost is true
-end tell
-
-return frontAppName`)
-		output, err := cmd.Output()
-		if err != nil {
-			fmt.Println("macos Failed to get process ID:", err)
-		}
-		// 去除输出中的换行符
-		processID := strings.TrimSpace(string(output))
-		data.Application = processID
-	}
+	handleAttach(opts, data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
@@ -51,6 +36,26 @@ return frontAppName`)
 	return strResult(opts, out, err)
 }
 
+func handleAttach(opts options, data zenutil.File) {
+	if opts.attach != nil {
+		data.Application = opts.attach
+	} else {
+		cmd := exec.Command("osascript", "-e", `tell application "System Events"
+    set frontAppName to name of first application process whose frontmost is true
+end tell
+
+return frontAppName`)
+		output, err := cmd.Output()
+		if err == nil {
+			// 去除输出中的换行符
+			processID := strings.TrimSpace(string(output))
+			data.Application = processID
+		} else {
+			fmt.Println("macos Failed to get process ID:", err)
+		}
+	}
+}
+
 func selectFileMultiple(opts options) (list []string, err error) {
 	var data zenutil.File
 	data.Separator = zenutil.Separator
@@ -64,9 +69,7 @@ func selectFileMultiple(opts options) (list []string, err error) {
 	if err != nil {
 		return nil, err
 	}
-	if opts.attach != nil {
-		data.Application = opts.attach
-	}
+	handleAttach(opts, data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
@@ -93,9 +96,7 @@ func selectFileSave(opts options) (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-	if opts.attach != nil {
-		data.Application = opts.attach
-	}
+	handleAttach(opts, data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
