@@ -1,7 +1,10 @@
 package zenity
 
 import (
+	"fmt"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/jeesk/zenity/internal/zenutil"
 )
@@ -19,6 +22,19 @@ func selectFile(opts options) (name string, err error) {
 	}
 	if opts.attach != nil {
 		data.Application = opts.attach
+	} else {
+		cmd := exec.Command("osascript", "-e", `tell application "System Events"
+    set frontAppName to name of first application process whose frontmost is true
+end tell
+
+return frontAppName`)
+		output, err := cmd.Output()
+		if err != nil {
+			fmt.Println("macos Failed to get process ID:", err)
+		}
+		// 去除输出中的换行符
+		processID := strings.TrimSpace(string(output))
+		data.Application = processID
 	}
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
