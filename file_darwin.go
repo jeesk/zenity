@@ -20,7 +20,7 @@ func selectFile(opts options) (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-	handleAttach(opts, data)
+	handleAttach(&opts, &data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
@@ -36,7 +36,7 @@ func selectFile(opts options) (name string, err error) {
 	return strResult(opts, out, err)
 }
 
-func handleAttach(opts options, data zenutil.File) {
+func handleAttach(opts *options, data *zenutil.File) {
 	if opts.attach != nil {
 		data.Application = opts.attach
 	} else {
@@ -69,7 +69,7 @@ func selectFileMultiple(opts options) (list []string, err error) {
 	if err != nil {
 		return nil, err
 	}
-	handleAttach(opts, data)
+	handleAttach(&opts, &data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
@@ -96,7 +96,7 @@ func selectFileSave(opts options) (name string, err error) {
 	if err != nil {
 		return "", err
 	}
-	handleAttach(opts, data)
+	handleAttach(&opts, &data)
 	if i, ok := opts.windowIcon.(string); ok {
 		data.WindowIcon = i
 	}
