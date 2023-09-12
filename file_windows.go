@@ -22,14 +22,6 @@ func selectFile(opts options) (string, error) {
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
 	args.Flags = win.OFN_NOCHANGEDIR | win.OFN_FILEMUSTEXIST | win.OFN_EXPLORER
-	if opts.windowClosePrevention {
-		args.FnHook = syscall.NewCallback(func(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
-			if msg == win.WM_CLOSE {
-				return 1
-			}
-			return 0
-		})
-	}
 	if opts.title != nil {
 		args.Title = strptr(*opts.title)
 	}
@@ -87,15 +79,6 @@ func selectFileMultiple(opts options) ([]string, error) {
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
 	args.Flags = win.OFN_NOCHANGEDIR | win.OFN_ALLOWMULTISELECT | win.OFN_FILEMUSTEXIST | win.OFN_EXPLORER
-
-	if opts.windowClosePrevention {
-		args.FnHook = syscall.NewCallback(func(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
-			if msg == win.WM_CLOSE {
-				return 1
-			}
-			return 0
-		})
-	}
 	if opts.title != nil {
 		args.Title = strptr(*opts.title)
 	}
@@ -164,15 +147,6 @@ func selectFileSave(opts options) (string, error) {
 	args.StructSize = uint32(unsafe.Sizeof(args))
 	args.Owner, _ = opts.attach.(win.HWND)
 	args.Flags = win.OFN_NOCHANGEDIR | win.OFN_PATHMUSTEXIST | win.OFN_NOREADONLYRETURN | win.OFN_EXPLORER
-
-	if opts.windowClosePrevention {
-		args.FnHook = syscall.NewCallback(func(hwnd uintptr, msg uint32, wParam, lParam uintptr) uintptr {
-			if msg == win.WM_CLOSE {
-				return 1
-			}
-			return 0
-		})
-	}
 	if opts.title != nil {
 		args.Title = strptr(*opts.title)
 	}
@@ -212,10 +186,10 @@ func selectFileSave(opts options) (string, error) {
 }
 
 func pickFolders(opts options, multi bool) (string, []string, error) {
+	handleAttach(&opts)
 	owner, _ := opts.attach.(win.HWND)
 	defer setup(owner)()
 
-	handleAttach(&opts)
 	err := win.CoInitializeEx(0, win.COINIT_APARTMENTTHREADED|win.COINIT_DISABLE_OLE1DDE)
 	if err != win.RPC_E_CHANGED_MODE {
 		if err != nil {
