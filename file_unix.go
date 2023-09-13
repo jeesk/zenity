@@ -3,12 +3,20 @@
 package zenity
 
 import (
+	"github.com/jeesk/zenity/internal/zencmd"
+	"os"
 	"strings"
 
 	"github.com/jeesk/zenity/internal/zenutil"
 )
 
 func selectFile(opts options) (string, error) {
+	if opts.attach == 0 {
+		if id := zencmd.GetParentWindowId(os.Getppid()); id != 0 {
+			opts.attach = int(id)
+		}
+	}
+
 	args := []string{"--file-selection"}
 	args = appendGeneral(args, opts)
 	args = appendFileArgs(args, opts)
@@ -18,6 +26,11 @@ func selectFile(opts options) (string, error) {
 }
 
 func selectFileMultiple(opts options) ([]string, error) {
+	if opts.attach == 0 {
+		if id := zencmd.GetParentWindowId(os.Getppid()); id != 0 {
+			opts.attach = int(id)
+		}
+	}
 	args := []string{"--file-selection", "--multiple", "--separator", zenutil.Separator}
 	args = appendGeneral(args, opts)
 	args = appendFileArgs(args, opts)
@@ -27,6 +40,11 @@ func selectFileMultiple(opts options) ([]string, error) {
 }
 
 func selectFileSave(opts options) (string, error) {
+	if opts.attach == 0 {
+		if id := zencmd.GetParentWindowId(os.Getppid()); id != 0 {
+			opts.attach = int(id)
+		}
+	}
 	args := []string{"--file-selection", "--save"}
 	args = appendGeneral(args, opts)
 	args = appendFileArgs(args, opts)

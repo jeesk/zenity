@@ -1,7 +1,6 @@
 package zenity
 
 import (
-	"github.com/jeesk/zenity/internal/zencmd"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,9 +14,6 @@ import (
 //
 // May return: ErrCanceled.
 func SelectFile(options ...Option) (string, error) {
-	if id := zencmd.GetParentWindowId(os.Getppid()); id != 0 {
-		options = append(options, Attach(id), Modal())
-	}
 	return selectFile(applyOptions(options))
 }
 
@@ -28,9 +24,6 @@ func SelectFile(options ...Option) (string, error) {
 //
 // May return: ErrCanceled, ErrUnsupported.
 func SelectFileMultiple(options ...Option) ([]string, error) {
-	if id := zencmd.GetParentWindowId(os.Getppid()); id != 0 {
-		options = append(options, Attach(id), Modal())
-	}
 	return selectFileMultiple(applyOptions(options))
 }
 
@@ -41,9 +34,6 @@ func SelectFileMultiple(options ...Option) ([]string, error) {
 //
 // May return: ErrCanceled.
 func SelectFileSave(options ...Option) (string, error) {
-	if id := zencmd.GetParentWindowId(os.Getppid()); id != 0 {
-		options = append(options, Attach(id), Modal())
-	}
 	return selectFileSave(applyOptions(options))
 }
 
