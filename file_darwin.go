@@ -40,18 +40,19 @@ func handleAttach(opts *options, data *zenutil.File) {
 	if opts.attach != nil {
 		data.Application = opts.attach
 	} else {
-		cmd := exec.Command("osascript", "-e", `tell application "System Events"
+		if opts.workAroundApplicationId {
+			cmd := exec.Command("osascript", "-e", `tell application "System Events"
     set frontAppName to name of first application process whose frontmost is true
 end tell
 
 return frontAppName`)
-		output, err := cmd.Output()
-		if err == nil {
-			// 去除输出中的换行符
-			processID := strings.TrimSpace(string(output))
-			data.Application = processID
-		} else {
-			fmt.Println("macos Failed to get process ID:", err)
+			output, err := cmd.Output()
+			if err == nil {
+				processID := strings.TrimSpace(string(output))
+				data.Application = processID
+			} else {
+				fmt.Println("macos Failed to get process ID:", err)
+			}
 		}
 	}
 }

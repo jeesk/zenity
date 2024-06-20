@@ -38,20 +38,21 @@ func IsAvailable() bool {
 
 type options struct {
 	// General options
-	title         *string
-	width         uint
-	height        uint
-	okLabel       *string
-	cancelLabel   *string
-	extraButton   *string
-	defaultCancel bool
-	icon          any
-	windowIcon    any
-	attach        any
-	modal         bool
-	display       string
-	class         string
-	name          string
+	title                   *string
+	width                   uint
+	height                  uint
+	okLabel                 *string
+	cancelLabel             *string
+	extraButton             *string
+	defaultCancel           bool
+	icon                    any
+	windowIcon              any
+	attach                  any
+	workAroundApplicationId bool
+	modal                   bool
+	display                 string
+	class                   string
+	name                    string
 
 	// Message options
 	noWrap    bool
@@ -206,6 +207,10 @@ func Attach(id any) Option {
 // Modal returns an Option to set the modal hint.
 func Modal() Option {
 	return funcOption(func(o *options) { o.modal = true })
+}
+
+func WorkAroundApplicationId() Option {
+	return funcOption(func(o *options) { o.workAroundApplicationId = true })
 }
 
 // Display returns an Option to set the X display to use (Unix only).
