@@ -40,7 +40,7 @@ func handleAttach(opts *options, data *zenutil.File) {
 	if opts.attach != nil {
 		data.Application = opts.attach
 	} else {
-		if opts.workAroundApplicationId {
+		if !opts.dontAttachDarwinWindow {
 			cmd := exec.Command("osascript", "-e", `tell application "System Events"
     set frontAppName to name of first application process whose frontmost is true
 end tell
