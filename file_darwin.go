@@ -37,22 +37,23 @@ func selectFile(opts options) (name string, err error) {
 }
 
 func handleAttach(opts *options, data *zenutil.File) {
+	if opts.dontAttachDarwinWindow {
+		return
+	}
 	if opts.attach != nil {
 		data.Application = opts.attach
 	} else {
-		if !opts.dontAttachDarwinWindow {
-			cmd := exec.Command("osascript", "-e", `tell application "System Events"
+		cmd := exec.Command("osascript", "-e", `tell application "System Events"
     set frontAppName to name of first application process whose frontmost is true
 end tell
 
 return frontAppName`)
-			output, err := cmd.Output()
-			if err == nil {
-				processID := strings.TrimSpace(string(output))
-				data.Application = processID
-			} else {
-				fmt.Println("macos Failed to get process ID:", err)
-			}
+		output, err := cmd.Output()
+		if err == nil {
+			processID := strings.TrimSpace(string(output))
+			data.Application = processID
+		} else {
+			fmt.Println("macos Failed to get process ID:", err)
 		}
 	}
 }
