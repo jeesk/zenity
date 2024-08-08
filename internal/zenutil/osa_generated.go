@@ -17,6 +17,7 @@ var scripts = template.Must(template.New("").Funcs(template.FuncMap{"json": func
 ObjC.import('stdio')
 ObjC.import('stdlib')
 {{template "common" .}}
+Application("System Events").currentUserLocale.languageTag = "zh";
 try{var res=app.chooseColor({defaultColor:{{json .Color}}})}catch(e){if(e.errorNumber===-128)$.exit(1)
 $.dprintf(2,e)
 $.exit(-1)}
